@@ -19,18 +19,23 @@
 
 # include "bitmap.c"
 
-# define BIT_TEST 8
+# define BITS 17
+# define BIT_TEST 3
 
 
 int main()
 {
-	uint8_t *bitmap = bitmap_create(17);
+	bitmap *bitmap = bitmap_create(BITS);
 
 	bitmap_enable(bitmap, BIT_TEST);
 	printf("bit %u: %u\n", BIT_TEST, bitmap_get(bitmap, BIT_TEST));
 
+	printf("primo bit attivo: %u\n", bitmap_find_next_enabled(bitmap, 0));
+
 	bitmap_disable(bitmap, BIT_TEST);
 	printf("bit %u: %u\n", BIT_TEST, bitmap_get(bitmap, BIT_TEST));
+
+
 
 	return 0;
 }
