@@ -37,9 +37,23 @@ bitmap_create(size_t bits)
 	bitmap *ret = malloc(sizeof(bitmap));
 
 	ret->bits = bits;
-	ret->data = malloc(ceil(bits/8.0));
+	ret->data = calloc(ceil(bits/8.0), 1);
 
 	return ret;
+}
+
+
+void
+bitmap_resize(bitmap *b, size_t bits)
+{
+	b->data = realloc(b->data, ceil(bits/8.0));
+
+	// Va inizializzata la nuova memoria, realloc non lo fa
+	if (ceil(bits/8.0) > ceil(b->bits/8.0))
+		for(size_t i = ceil(b->bits/8.0); i < ceil(bits/8.0); i++)
+			b->data[i] = 0;
+
+	b->bits = bits;
 }
 
 
