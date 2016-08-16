@@ -1,6 +1,6 @@
 # Bitmap
 
-Funzioni per gestire una mappa di bit in c
+Funzioni per gestire una bitmap in c
 
 
 ## Per aggiornamenti
