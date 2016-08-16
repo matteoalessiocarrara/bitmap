@@ -1,4 +1,7 @@
-# Attenzione: lavori in corso
+# Bitmap
+
+Funzioni per gestire una mappa di bit in c
+
 
 ## Per aggiornamenti
 
