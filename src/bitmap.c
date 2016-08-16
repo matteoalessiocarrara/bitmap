@@ -82,10 +82,14 @@ bitmap_find_next_enabled(bitmap *b, size_t start)
 {
 	// Se la ricerca inizia dentro ad un byte
 	if ((start % 8) != 0)
+	{
 		for(int8_t i = 7 - (start % 8); i >= 0; i--)
 			if (b->data[start/8] & (1 << i))
-				return (start % 8) == 7? start : start + (7 - i);
+				return (start % 8) == 7? start : start + (7 - (start % 8) - i);
 
+		// Se non ha trovato niente in questo byte, passiamo ai byte successivi
+		start += (8 - (start % 8));
+	}
 
 	// Se la ricerca inizia dall'inizio di un byte possiamo velocizzare controllando
 	// un byte alla volta, piuttosto che i singoli bit
