@@ -25,17 +25,17 @@
 
 int main()
 {
-	bitmap *b = bitmap_create(BITS);
+	bitmap b = bitmap_create(BITS);
 
-	bitmap_enable(b, BIT_TEST);
-	printf("bit %u: %u\n", BIT_TEST, bitmap_get(b, BIT_TEST));
+	bitmap_enable(&b, BIT_TEST);
+	printf("bit %u: %u\n", BIT_TEST, bitmap_get(&b, BIT_TEST));
 
-	printf("primo bit attivo: %u\n", bitmap_find_next_enabled(b, 0));
+	printf("primo bit attivo: %u\n", bitmap_find_next_enabled(&b, 0));
 
-	bitmap_disable(b, BIT_TEST);
-	printf("bit %u: %u\n", BIT_TEST, bitmap_get(b, BIT_TEST));
+	bitmap_disable(&b, BIT_TEST);
+	printf("bit %u: %u\n", BIT_TEST, bitmap_get(&b, BIT_TEST));
 
-	bitmap_resize(b, BITS + 8);
+	bitmap_resize(&b, BITS + 8);
 
 	return 0;
 }

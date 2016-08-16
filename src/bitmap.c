@@ -20,9 +20,15 @@
 # include <stdbool.h>
 # include <stdint.h>
 # include <stddef.h>
+# include <stdlib.h>
+# include <string.h>
 # include <malloc.h>
+# include <assert.h>
+# include <errno.h>
 # include <math.h>
 
+
+// TODO Gestire meglio errori
 
 typedef struct _bitmap
 {
@@ -31,13 +37,17 @@ typedef struct _bitmap
 } bitmap;
 
 
-bitmap *
+bitmap
 bitmap_create(size_t bits)
 {
-	bitmap *ret = malloc(sizeof(bitmap));
+	bitmap ret;
 
-	ret->bits = bits;
-	ret->data = calloc(ceil(bits/8.0), 1);
+	ret.bits = bits;
+	if ((ret.data = calloc(ceil(bits/8.0), 1)) == NULL)
+	{
+		perror("malloc()");
+		exit(EXIT_FAILURE);
+	}
 
 	return ret;
 }
@@ -46,12 +56,17 @@ bitmap_create(size_t bits)
 void
 bitmap_resize(bitmap *b, size_t bits)
 {
-	b->data = realloc(b->data, ceil(bits/8.0));
+	uint8_t *tmp = realloc(b->data, ceil(bits/8.0));
+
+	if (tmp == NULL)
+	{
+		perror("realloc()");
+		exit(EXIT_FAILURE);
+	}
+	else b->data = tmp;
 
 	// Va inizializzata la nuova memoria, realloc non lo fa
-	if (ceil(bits/8.0) > ceil(b->bits/8.0))
-		for(size_t i = ceil(b->bits/8.0); i < ceil(bits/8.0); i++)
-			b->data[i] = 0;
+	memset(b->data, 0, ceil(bits/8.0) - ceil(b->bits/8.0));
 
 	b->bits = bits;
 }
@@ -60,12 +75,14 @@ bitmap_resize(bitmap *b, size_t bits)
 uint8_t
 bitmap_get(bitmap *b, size_t bitmap_offset)
 {
+	assert(bitmap_offset < (b->bits));
 	return (b->data[bitmap_offset/8] >> (7 - bitmap_offset % 8)) & 1;
 }
 
 void
 bitmap_enable(bitmap *b, size_t bitmap_offset)
 {
+	assert(bitmap_offset < (b->bits));
 	b->data[bitmap_offset/8] |= (1 << (7 - bitmap_offset % 8));
 }
 
@@ -73,6 +90,7 @@ bitmap_enable(bitmap *b, size_t bitmap_offset)
 void
 bitmap_disable(bitmap *b, size_t bitmap_offset)
 {
+	assert(bitmap_offset < (b->bits));
 	b->data[bitmap_offset/8] &= ~(1 << (7 - bitmap_offset % 8));
 }
 
